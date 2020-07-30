@@ -1,8 +1,6 @@
-FROM alpine/helm:2.16.0
+FROM alpine/helm:3.2.1
 
-LABEL version="0.1.5"
-LABEL repository="https://github.com/igabaydulin/helm-check-action"
-LABEL maintainer="Igor Gabaydulin"
+LABEL version="0.1.6"
 
 LABEL com.github.actions.name="GitHub Action for Helm Templates Validation"
 LABEL com.github.actions.description="Checks if helm templates are valid"
