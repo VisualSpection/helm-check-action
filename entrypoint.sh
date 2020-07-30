@@ -33,7 +33,7 @@ function helmLint {
   for region in $REGIONS; do
     for env in $ENVS; do
       if [ -f $env/region/"${region}.yaml" ]; then
-        echo "Evaluating Region:${region}, Environment:${env}...\n"
+        echo "Evaluating Region:${region}, Environment:${env}..."
         echo "helm lint . -f ${env}/secrets.yaml -f ${env}/values.yaml -f ${env}/region/${region}.yaml"
         helm lint . -f $env/secrets.yaml -f $env/values.yaml -f $env/region/"${region}.yaml"
         HELM_LINT_EXIT_CODE=$?
