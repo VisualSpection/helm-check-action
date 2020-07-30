@@ -30,10 +30,6 @@ function helmLint {
   echo "helm lint "
   printStepExecutionDelimeter
   cd $CHART_LOCATION
-  IFS=';' read -ra regions <<< $CLUSTER_REGIONS
-  IFS=$OIFS
-  IFS=';' read -ra envs <<< $ENVIRONMENTS
-  IFS=$OIFS
 
   for cluster_region in "${regions[@]}"; do
     for env in "${envs[@]}"; do
@@ -94,7 +90,7 @@ function totalInfo {
 }
 
 CHART_LOCATION="chart"
-ENVIRONMENTS="dev;prod"
+ENVIRONMENTS=("dev","prod")
 
 displayInfo
 helmLint
