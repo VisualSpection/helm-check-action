@@ -31,10 +31,10 @@ function helmLint {
   printStepExecutionDelimeter
   cd $CHART_LOCATION
 
-  for cluster_region in "${regions[@]}"; do
-    for env in "${envs[@]}"; do
-      if [ -f $env/region/"${cluster_region}.yaml" ]; then
-        helm lint . -f $env/secrets.yaml -f $env/values.yaml -f $env/region/"${cluster_region}.yaml"
+  for region in $REGIONS; do
+    for env in $ENVS; do
+      if [ -f $env/region/"${region}.yaml" ]; then
+        helm lint . -f $env/secrets.yaml -f $env/values.yaml -f $env/region/"${region}.yaml"
         HELM_LINT_EXIT_CODE=$?
         printStepExecutionDelimeter
         if [ $HELM_LINT_EXIT_CODE -eq 0 ]; then
@@ -90,7 +90,7 @@ function totalInfo {
 }
 
 CHART_LOCATION="chart"
-ENVIRONMENTS=("dev","prod")
+ENVS="dev prod"
 
 displayInfo
 helmLint
