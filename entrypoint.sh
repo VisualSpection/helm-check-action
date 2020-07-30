@@ -27,20 +27,29 @@ function displayInfo {
 function helmLint {
   echo -e "\n\n\n"
   echo -e "1. Checking a chart for possible issues\n"
-  if [ -z "$CHART_LOCATION" ]; then
-    echo "Skipped due to condition: \$CHART_LOCATION is not provided"
-    return -1
-  fi
-  echo "helm lint $CHART_LOCATION"
+  echo "helm lint "
   printStepExecutionDelimeter
-  helm lint "$CHART_LOCATION"
-  HELM_LINT_EXIT_CODE=$?
-  printStepExecutionDelimeter
-  if [ $HELM_LINT_EXIT_CODE -eq 0 ]; then
-    echo "Result: SUCCESS"
-  else
-    echo "Result: FAILED"
-  fi
+  cd $CHART_LOCATION
+  IFS=';' read -ra regions <<< $CLUSTER_REGIONS
+  IFS=$OIFS
+  IFS=';' read -ra envs <<< $ENVIRONMENTS
+  IFS=$OIFS
+
+  for cluster_region in "${regions[@]}"; do
+    for env in "${envs[@]}"; do
+      if [ -f $env/region/"${cluster_region}.yaml" ]; then
+        helm lint . -f $env/secrets.yaml -f $env/values.yaml -f $env/region/"${cluster_region}.yaml"
+        HELM_LINT_EXIT_CODE=$?
+        printStepExecutionDelimeter
+        if [ $HELM_LINT_EXIT_CODE -eq 0 ]; then
+          echo "Result: SUCCESS"
+        else
+          echo "Result: FAILED"
+         return -1
+        fi
+      fi
+    done
+  done
   return $HELM_LINT_EXIT_CODE
 }
 
@@ -84,7 +93,9 @@ function totalInfo {
   fi
 }
 
+CHART_LOCATION="chart"
+ENVIRONMENTS="dev;prod"
+
 displayInfo
 helmLint
-helmTemplate $?
 totalInfo $?
